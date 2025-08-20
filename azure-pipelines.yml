@@ -5,7 +5,7 @@ trigger:
       - main
 
 variables:
-  azureSubscriptionEndpoint: 'service-eshop'       
+  azureSubscription:: 'service-eshop'       
   acrName: 'eshopacr123'
   acrLoginServer: 'eshopacr123'
   imageName: 'eshop-web'
@@ -55,7 +55,7 @@ stages:
     steps:
     - checkout: self
 
-    - task: Kubectl@1
+    - task: Kubernetes@1
       displayName: 'Apply Deployment'
       inputs:
         connectionType: 'Azure Resource Manager'
