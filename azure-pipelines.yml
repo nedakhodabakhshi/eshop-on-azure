@@ -73,6 +73,7 @@ stages:
         command: apply
         useConfigurationFile: true
         configuration: |
-          $(Build.SourcesDirectory)/deploy/k8s/web-deployment.yaml
-          $(Build.SourcesDirectory)/deploy/k8s/web-service.yaml
-          $(Build.SourcesDirectory)/deploy/k8s/ingress.yaml
+          $(Build.SourcesDirectory)/eshop-on-azure/deploy/k8s/web-deployment.yaml
+          $(Build.SourcesDirectory)/eshop-on-azure/deploy/k8s/web-service.yaml
+          $(Build.SourcesDirectory)/eshop-on-azure/deploy/k8s/ingress.yaml
+
