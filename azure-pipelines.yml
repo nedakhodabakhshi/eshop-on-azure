@@ -1,4 +1,5 @@
 
+
 trigger:
   branches:
     include:
@@ -66,6 +67,6 @@ stages:
         command: apply
         useConfigurationFile: true
         configuration: |
-          deploy/k8s/web-deployment.yaml
-          deploy/k8s/web-service.yaml
-          deploy/k8s/ingress.yaml
+          ./deploy/k8s/web-deployment.yaml
+          ./deploy/k8s/web-service.yaml
+          ./deploy/k8s/ingress.yaml
