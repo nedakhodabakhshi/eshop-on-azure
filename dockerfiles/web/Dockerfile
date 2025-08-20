@@ -1,15 +1,19 @@
-
+# Use official .NET SDK image
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+
+WORKDIR /src
+
+# Copy and restore only the .csproj to cache dependencies
+COPY src/WebApp/*.csproj ./WebApp/
+RUN dotnet restore ./WebApp/WebApp.csproj
+
+# Copy everything and build
+COPY src/WebApp/. ./WebApp/
+WORKDIR /src/WebApp
+RUN dotnet publish -c Release -o /app
+
+# Final image
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS final
 WORKDIR /app
-
-COPY src/Web/WebMVC/*.csproj ./WebMVC/
-RUN dotnet restore ./WebMVC/WebMVC.csproj
-
-COPY . .
-WORKDIR /app/WebMVC
-RUN dotnet publish WebMVC.csproj -c Release -o /out
-
-FROM mcr.microsoft.com/dotnet/aspnet:7.0
-WORKDIR /app
-COPY --from=build /out .
-ENTRYPOINT ["dotnet", "WebMVC.dll"]
+COPY --from=build /app .
+ENTRYPOINT ["dotnet", "WebApp.dll"]
