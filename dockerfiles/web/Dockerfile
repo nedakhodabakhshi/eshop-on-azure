@@ -2,12 +2,12 @@
 # ---------------------
 # Build stage
 # ---------------------
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 
 # Set working directory
 WORKDIR /src
 
-# Copy everything (نه فقط WebApp) چون پروژه WebApp به بقیه پروژه‌ها وابسته است
+# Copy everything 
 COPY . .
 
 # Restore dependencies for WebApp
@@ -20,14 +20,14 @@ RUN dotnet publish -c Release -o /app
 # ---------------------
 # Runtime stage
 # ---------------------
-FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS final
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
 
 WORKDIR /app
 
 # Copy published output from build stage
 COPY --from=build /app .
 
-# Expose port 80 (اختیاری)
+# Expose port 80 
 EXPOSE 80
 
 # Define entrypoint
