@@ -66,6 +66,6 @@ stages:
         command: apply
         useConfigurationFile: true
         configuration: |
-          k8s/web-deployment.yaml
-          k8s/web-service.yaml
-          k8s/ingress.yaml
+          deploy/k8s/web-deployment.yaml
+          deploy/k8s/web-service.yaml
+          deploy/k8s/ingress.yaml
