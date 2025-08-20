@@ -50,26 +50,29 @@ stages:
   displayName: 'Deploy to AKS'
   dependsOn: BuildAndPush
   jobs:
-    - job: DeployToK8s
-      pool:
-        vmImage: 'ubuntu-latest'
-      steps:
-        - checkout: self
-          persistCredentials: true
-          fetchDepth: 0
+  - job: DeployToK8s
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - checkout: self
 
-        - task: Kubernetes@1
-          displayName: 'Apply Deployment'
-          inputs:
-            connectionType: 'Azure Resource Manager'
-            azureSubscriptionEndpoint: $(azureSubscription)
-            azureResourceGroup: $(resourceGroup)
-            kubernetesCluster: $(aksCluster)
-            namespace: $(kubernetesNamespace)
-            command: apply
-            useConfigurationFile: true
-            configuration: |
-              deploy/k8s/web-deployment.yaml
-              deploy/k8s/web-service.yaml
-              deploy/k8s/ingress.yaml
+    # (Optional) Debug: list what actually exists
+    - script: |
+        echo "Listing manifests..."
+        ls -la $(Build.SourcesDirectory)/deploy/k8s
+      displayName: 'Debug: list k8s dir'
 
+    - task: Kubernetes@1
+      displayName: 'Apply Deployment'
+      inputs:
+        connectionType: 'Azure Resource Manager'
+        azureSubscriptionEndpoint: $(azureSubscription)
+        azureResourceGroup: $(resourceGroup)
+        kubernetesCluster: $(aksCluster)
+        namespace: $(kubernetesNamespace)
+        command: apply
+        useConfigurationFile: true
+        configuration: |
+          $(Build.SourcesDirectory)/deploy/k8s/web-deployment.yaml
+          $(Build.SourcesDirectory)/deploy/k8s/web-service.yaml
+          $(Build.SourcesDirectory)/deploy/k8s/ingress.yaml
