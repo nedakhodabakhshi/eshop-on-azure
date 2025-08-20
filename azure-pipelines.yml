@@ -55,7 +55,7 @@ stages:
     steps:
     - checkout: self
 
-    - task: Kubernetes@1
+    - task: Kubectl@1
       displayName: 'Apply Deployment'
       inputs:
         connectionType: 'Azure Resource Manager'
