@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # eShop Reference Application - "AdventureWorks"
 
 A reference .NET application implementing an e-commerce website using a services-based architecture using [.NET Aspire](https://learn.microsoft.com/dotnet/aspire/).
@@ -140,3 +141,10 @@ The sample catalog data is defined in [catalog.json](https://github.com/dotnet/e
 ## eShop on Azure
 
 For a version of this app configured for deployment on Azure, please view [the eShop on Azure](https://github.com/Azure-Samples/eShopOnAzure) repo.
+=======
+# eShop has moved!
+
+As of November 2023, the eShop sample application has been updated and moved to https://github.com/dotnet/eShop. Active development will continue there.
+
+This repo is now a read-only archive. If you'd like to refer to the old code that was in here, you can find it in the "dev" branch.
+>>>>>>> a54f5b12c78bb14751eeab666cba916d0fe88679
