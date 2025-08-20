@@ -59,7 +59,7 @@ stages:
       displayName: 'Apply Deployment'
       inputs:
         connectionType: 'Azure Resource Manager'
-        azureSubscription: $(azureSubscription)
+        azureSubscription: 'azure-service-eshop'
         azureResourceGroup: $(resourceGroup)
         kubernetesCluster: $(aksCluster)
         namespace: $(kubernetesNamespace)
