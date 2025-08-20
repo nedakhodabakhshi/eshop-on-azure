@@ -5,7 +5,7 @@ trigger:
       - main
 
 variables:
-  azureSubscription: 'service-eshop'       
+  azureSubscriptionEndpoint: 'service-eshop'       
   acrName: 'eshopacr123'
   acrLoginServer: 'eshopacr123'
   imageName: 'eshop-web'
