@@ -1,7 +1,6 @@
-
-# ---------------------
+# ------------------------
 # Build stage
-# ---------------------
+# ------------------------
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 
 # Set working directory
@@ -14,12 +13,11 @@ COPY . .
 RUN dotnet restore ./src/WebApp/WebApp.csproj
 
 # Build and publish WebApp
-WORKDIR /src/WebApp
-RUN dotnet publish -c Release -o /app
+RUN dotnet publish ./src/WebApp/WebApp.csproj -c Release -o /app
 
-# ---------------------
+# ------------------------
 # Runtime stage
-# ---------------------
+# ------------------------
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
 
 WORKDIR /app
@@ -32,3 +30,4 @@ EXPOSE 80
 
 # Define entrypoint
 ENTRYPOINT ["dotnet", "WebApp.dll"]
+
