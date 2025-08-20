@@ -7,11 +7,11 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 # Set working directory
 WORKDIR /src
 
-# Copy everything 
+# Copy everything into container
 COPY . .
 
 # Restore dependencies for WebApp
-RUN dotnet restore ./WebApp/WebApp.csproj
+RUN dotnet restore ./src/WebApp/WebApp.csproj
 
 # Build and publish WebApp
 WORKDIR /src/WebApp
@@ -27,7 +27,7 @@ WORKDIR /app
 # Copy published output from build stage
 COPY --from=build /app .
 
-# Expose port 80 
+# Expose port 80
 EXPOSE 80
 
 # Define entrypoint
