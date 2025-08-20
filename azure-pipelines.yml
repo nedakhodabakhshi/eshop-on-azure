@@ -5,7 +5,7 @@ trigger:
       - main
 
 variables:
-  azureSubscription: 'eshopacr123'      
+  azureSubscription: 'service-eshop'      
   acrName: 'eshopacr123'
   acrLoginServer: 'eshopacr123'
   imageName: 'eshop-web'
@@ -59,7 +59,7 @@ stages:
       displayName: 'Apply Deployment'
       inputs:
         connectionType: 'Azure Resource Manager'
-        azureSubscription: 'service-eshop'
+        azureSubscription: $(azureSubscription)
         azureResourceGroup: $(resourceGroup)
         kubernetesCluster: $(aksCluster)
         namespace: $(kubernetesNamespace)
