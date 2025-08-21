@@ -1,22 +1,28 @@
 
-
 trigger:
   branches:
     include:
       - main
 
+# ---------------- Variables ----------------
 variables:
-  azureSubscription: 'eshop-subscription'      
-  acrName: 'eshopacr123'
-  acrLoginServer: 'eshopacr123'
+  # نام سرویس‌کانکشن Azure Resource Manager
+  azureSubscription: 'eshop-subscription'
+  # نام سرویس‌کانکشن ACR (نوع: Azure Container Registry)
+  acrServiceConnection: 'acr-eshop'
+
+  # نام ریپوی ایمیج در ACR
   imageName: 'eshop-web'
-  kubernetesNamespace: 'default'
-  aksCluster: 'eshop-aks'
+  # مسیر Dockerfile
+  dockerfilePath: 'dockerfiles/web/Dockerfile'
+
+  # AKS
   resourceGroup: 'eshop-rg'
+  aksCluster: 'eshop-aks'
+  kubernetesNamespace: 'default'
 
+# --------------- Build & Push ---------------
 stages:
-
-# ---------------- Build & Push ----------------
 - stage: BuildAndPush
   displayName: 'Build and Push Image to ACR'
   jobs:
@@ -26,25 +32,27 @@ stages:
       steps:
         - checkout: self
 
-        # ✅ Login to ACR
+        # Login به ACR از طریق سرویس‌کانکشن
         - task: Docker@2
           displayName: 'Login to ACR'
           inputs:
             command: 'login'
-            containerRegistry: 'acr-eshop' 
+            containerRegistry: '$(acrServiceConnection)'
 
-        # ✅ Build and Push Image to ACR
+        # Build & Push
         - task: Docker@2
           displayName: 'Build and Push to ACR'
           inputs:
-            containerRegistry: 'acr-eshop'  
-            repository: $(imageName)
             command: 'buildAndPush'
-            Dockerfile: 'dockerfiles/web/Dockerfile'
+            containerRegistry: '$(acrServiceConnection)'
+            repository: '$(imageName)'
+            Dockerfile: '$(dockerfilePath)'
             buildContext: .
             tags: |
               latest
-# ------------------- Deploy to AKS -------------------
+              $(Build.BuildId)
+
+# ------------------ Deploy ------------------
 - stage: Deploy
   displayName: 'Deploy to AKS'
   dependsOn: BuildAndPush
@@ -55,24 +63,38 @@ stages:
       steps:
         - checkout: self
 
-        # فقط برای اطمینان: لیست فایل‌های مانيفست
+        # فقط برای دیباگ: ببینیم مانيفست‌ها روی ایجنت هست یا نه
         - script: |
             echo "Listing manifests..."
             ls -la $(Build.SourcesDirectory)/deploy/k8s
           displayName: 'Debug: list k8s dir'
 
-        # ✅ روش قطعی: kubectl apply از طریق Azure CLI
+        # دیپلوی با kubectl و هندل immutable بودن Service
         - task: AzureCLI@2
           displayName: 'kubectl apply manifests'
           inputs:
-            azureSubscription: $(azureSubscription)   # eshop-subscription
+            azureSubscription: '$(azureSubscription)'
             scriptType: bash
             scriptLocation: inlineScript
             inlineScript: |
               set -e
-              az aks get-credentials -g $(resourceGroup) -n $(aksCluster) --overwrite-existing
-              kubectl version --client
-              # پوشه‌ی همه مانيفست‌ها را apply کن
-              kubectl apply -f $(Build.SourcesDirectory)/deploy/k8s
-              # اختیاری: منتظر rollout دیپلویمنت بمان
-              kubectl rollout status deploy/eshop-web -n $(kubernetesNamespace) --timeout=120s
+              az aks get-credentials -g "$(resourceGroup)" -n "$(aksCluster)" --overwrite-existing
+
+              echo "Applying Deployment & Ingress..."
+              kubectl apply -n "$(kubernetesNamespace)" -f "$(Build.SourcesDirectory)/deploy/k8s/web-deployment.yaml"
+              kubectl apply -n "$(kubernetesNamespace)" -f "$(Build.SourcesDirectory)/deploy/k8s/ingress.yaml"
+
+              echo "Applying Service (with immutable-safe fallback)..."
+              set +e
+              kubectl apply -n "$(kubernetesNamespace)" -f "$(Build.SourcesDirectory)/deploy/k8s/web-service.yaml"
+              rc=$?
+              set -e
+              if [ $rc -ne 0 ]; then
+                echo "Service patch failed (immutable). Recreating service..."
+                kubectl delete -n "$(kubernetesNamespace)" -f "$(Build.SourcesDirectory)/deploy/k8s/web-service.yaml" --ignore-not-found
+                kubectl apply  -n "$(kubernetesNamespace)" -f "$(Build.SourcesDirectory)/deploy/k8s/web-service.yaml"
+              fi
+
+              echo "Waiting for rollout..."
+              kubectl rollout status deploy/eshop-web -n "$(kubernetesNamespace)" --timeout=180s || true
+
