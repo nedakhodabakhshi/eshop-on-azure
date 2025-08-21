@@ -8,7 +8,7 @@ trigger:
 variables:
   azureSubscription: 'eshop-subscription'      
   acrName: 'eshopacr123'
-  acrLoginServer: 'eshopacr123.azurecr.io'
+  acrLoginServer: 'eshopacr123'
   imageName: 'eshop-web'
   kubernetesNamespace: 'default'
   aksCluster: 'eshop-aks'
