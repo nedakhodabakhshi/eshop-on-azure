@@ -18,16 +18,21 @@ spec:
           image: eshopacr123.azurecr.io/eshop-web:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 8080          # ✅ به 8080 تغییر کرد
+            - containerPort: 8080
           env:
-            - name: ASPNETCORE_URLS        # ✅ روی 8080 گوش بده
+            - name: ASPNETCORE_URLS
               value: "http://0.0.0.0:8080"
             - name: ASPNETCORE_ENVIRONMENT
               value: "Development"
 
-            # مقادیر دمی برای بالا آمدن بدون بک‌اندها
+            # مقادیر دَمی برای بالا آمدن بدون بک‌اند
             - name: IdentityUrl
               value: "http://dummy-identity"
+            - name: IdentityUrlExternal
+              value: "http://dummy-identity"
+            - name: CallBackUrl
+              value: "http://eshop-web/signin-oidc"
+
             - name: BasketUrl
               value: "http://dummy-basket"
             - name: CatalogUrl
