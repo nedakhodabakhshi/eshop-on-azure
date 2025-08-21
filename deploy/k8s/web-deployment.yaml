@@ -2,8 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: eshop-web
-  labels:
-    app: eshop-web
 spec:
   replicas: 1
   selector:
@@ -15,7 +13,14 @@ spec:
         app: eshop-web
     spec:
       containers:
-      - name: eshop-web
-        image: eshopacr123.azurecr.io/eshop-web:latest
-        ports:
-        - containerPort: 80
+        - name: eshop-web
+          image: eshopacr123.azurecr.io/eshop-web:latest
+          ports:
+            - containerPort: 80
+          env:
+            - name: IdentityUrl
+              value: "http://dummy-identity"   # فعلاً هر مقدار معتبری؛ بعداً وقتی Identity را ساختی آدرس درستش را می‌گذاری
+            # اختیاری ولی مفید در فاز تست:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: "Development"
+
