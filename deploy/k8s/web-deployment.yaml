@@ -1,3 +1,4 @@
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -15,17 +16,16 @@ spec:
       containers:
         - name: eshop-web
           image: eshopacr123.azurecr.io/eshop-web:latest
+          imagePullPolicy: Always
           ports:
-            - containerPort: 80
+            - containerPort: 8080          # ✅ به 8080 تغییر کرد
           env:
-            # وب را مجبور می‌کنیم روی پورت 80 گوش دهد
-            - name: ASPNETCORE_URLS
-              value: "http://0.0.0.0:80"
-
+            - name: ASPNETCORE_URLS        # ✅ روی 8080 گوش بده
+              value: "http://0.0.0.0:8080"
             - name: ASPNETCORE_ENVIRONMENT
               value: "Development"
 
-            # کلیدهای اجباری که در استارتاپ خوانده می‌شوند (موقتاً دامی)
+            # مقادیر دمی برای بالا آمدن بدون بک‌اندها
             - name: IdentityUrl
               value: "http://dummy-identity"
             - name: BasketUrl
@@ -42,8 +42,5 @@ spec:
               value: "http://dummy-locations"
             - name: SignalrHubUrl
               value: "http://dummy-signalr"
-
-            # اختیاری، برای اینکه بعضی فیچرهای سفارشی غیرفعال شوند
             - name: UseCustomizationData
               value: "False"
-
