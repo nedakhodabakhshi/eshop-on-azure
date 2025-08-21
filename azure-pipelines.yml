@@ -16,7 +16,6 @@ variables:
 
 stages:
 
-# ------------------- Build & Push -------------------
 # ---------------- Build & Push ----------------
 - stage: BuildAndPush
   displayName: 'Build and Push Image to ACR'
@@ -32,13 +31,13 @@ stages:
           displayName: 'Login to ACR'
           inputs:
             command: 'login'
-            containerRegistry: 'eshop-subscription' 
+            containerRegistry: 'acr-eshop' 
 
         # ✅ Build and Push Image to ACR
         - task: Docker@2
           displayName: 'Build and Push to ACR'
           inputs:
-            containerRegistry: 'eshop-subscription'  
+            containerRegistry: 'acr-eshop'  
             repository: $(imageName)
             command: 'buildAndPush'
             Dockerfile: 'dockerfiles/web/Dockerfile'
