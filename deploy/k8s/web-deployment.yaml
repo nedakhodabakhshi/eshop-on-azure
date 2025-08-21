@@ -18,9 +18,32 @@ spec:
           ports:
             - containerPort: 80
           env:
-            - name: IdentityUrl
-              value: "http://dummy-identity"   # فعلاً هر مقدار معتبری؛ بعداً وقتی Identity را ساختی آدرس درستش را می‌گذاری
-            # اختیاری ولی مفید در فاز تست:
+            # وب را مجبور می‌کنیم روی پورت 80 گوش دهد
+            - name: ASPNETCORE_URLS
+              value: "http://0.0.0.0:80"
+
             - name: ASPNETCORE_ENVIRONMENT
               value: "Development"
+
+            # کلیدهای اجباری که در استارتاپ خوانده می‌شوند (موقتاً دامی)
+            - name: IdentityUrl
+              value: "http://dummy-identity"
+            - name: BasketUrl
+              value: "http://dummy-basket"
+            - name: CatalogUrl
+              value: "http://dummy-catalog"
+            - name: OrderingUrl
+              value: "http://dummy-ordering"
+            - name: MarketingUrl
+              value: "http://dummy-marketing"
+            - name: PaymentUrl
+              value: "http://dummy-payment"
+            - name: LocationsUrl
+              value: "http://dummy-locations"
+            - name: SignalrHubUrl
+              value: "http://dummy-signalr"
+
+            # اختیاری، برای اینکه بعضی فیچرهای سفارشی غیرفعال شوند
+            - name: UseCustomizationData
+              value: "False"
 
