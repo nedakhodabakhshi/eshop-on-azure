@@ -2,13 +2,10 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: eshop-ingress
-  annotations:
-    kubernetes.io/ingress.class: nginx       
 spec:
-  ingressClassName: nginx                     
+  ingressClassName: nginx
   rules:
-    - host: eshop.local
-      http:
+    - http:                     
         paths:
           - path: /
             pathType: Prefix
@@ -17,5 +14,6 @@ spec:
                 name: eshop-web-service
                 port:
                   number: 80
+
 
 
